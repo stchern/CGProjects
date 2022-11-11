@@ -8,12 +8,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
-#include <chrono>
-#include <iomanip>
 
-
-Intersection intersect(const Mesh& mesh, const IntersectionRay& ray, const std::vector<BVH::Node>& nodes, size_t currentIdx);
-bool isLeaf(const std::vector<BVH::Node>& nodes, size_t currentIdx);
 
 void BVH::construct(const Mesh& mesh)
 {
@@ -91,59 +86,9 @@ void BVH::construct(const Mesh& mesh)
     std::cout << "done. (used " << nodes.size() << " BVH nodes)" << std::endl;
 }
 
-Intersection intersect(const Mesh& mesh, const IntersectionRay& ray)
-{
-    Intersection result;
-    // TODO: use the BVH contained in the Mesh to quickly find the closest intersection
-
-    if (intersect(mesh.getBounds(), ray)) {
-        if (mesh.getBVH().isConstructed())  {
-            result = intersect(mesh, ray, mesh.getBVH().getNodes(), 0);
-        }
-        else {
-//             brute-force intersection test
-            for (const auto& face : mesh.getFaces()) {
-                const Triangle triangle = mesh.getTriangleFromFace(face);
-                const Intersection its = intersect(triangle, ray);
-
-                if (its.t < result.t)
-                    result = its;
-            }
-        }
-    }
-    return result;
-}
 
 
-Intersection intersect(const Mesh& mesh, const IntersectionRay& ray, const std::vector<BVH::Node>& nodes, size_t currentIdx)
-{
-    Intersection result;
-
-    if (!intersect(nodes[currentIdx].bounds, ray))
-        return result;
-
-    if (isLeaf(nodes, currentIdx)) {
-        std::span<const uint32_t> faceIndices = mesh.getBVH().getFaceIndices(nodes[currentIdx]);
-        for (const uint32_t faceIdx: faceIndices) {
-            const Triangle triangle = mesh.getTriangleFromFaceIndex(faceIdx);
-            const Intersection its = intersect(triangle, ray);
-            if (its.t < result.t)
-                result = its;
-        }
-        return result;
-    }
-
-    Intersection leftResult = intersect(mesh, ray, nodes, currentIdx * 2 + 1);
-    Intersection rightResult;
-    if (currentIdx * 2 + 2 < nodes.size())
-        rightResult = intersect(mesh, ray, nodes, currentIdx * 2 + 2);
-
-    if (leftResult.t < rightResult.t && leftResult.t < result.t)
-        return leftResult;
-    return rightResult;
-}
-
-bool isLeaf(const std::vector<BVH::Node>& nodes, size_t currentIdx)
+bool BVH::isNodeLeaf(size_t currentIdx) const
 {
     if (currentIdx * 2 + 1 >= nodes.size())
         return true;

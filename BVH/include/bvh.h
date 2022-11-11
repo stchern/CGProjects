@@ -40,6 +40,7 @@ public:
         return {faceIndices.cbegin() + node.facesBegin, faceIndices.cbegin() + node.facesEnd};
     }
 
+    bool isNodeLeaf(size_t currentIdx) const;
 private:
     /// return all face indices belonging to a specific node
     std::span<uint32_t> getFaceIndices(const Node& node)
