@@ -2,6 +2,7 @@
 #define INTERSECTION_H
 
 #include "common.h"
+#include "bvh.h"
 
 struct Intersection {
     Point3D intersection_point;
@@ -13,8 +14,8 @@ struct Intersection {
 
 bool intersect(const AABB& aabb, const IntersectionRay& ray);
 Intersection intersect(const Triangle& triangle, const IntersectionRay& ray);
-// (implemented in exercise03.cpp)
 Intersection intersect(const Mesh& mesh, const IntersectionRay& ray);
 Intersection intersect(const Scene& scene, const IntersectionRay& ray);
+Intersection intersect(const Mesh& mesh, const IntersectionRay& ray, const std::vector<BVH::Node>& nodes, size_t currentIdx);
 
 #endif // !INTERSECTION_H
