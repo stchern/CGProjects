@@ -158,7 +158,6 @@ add_executable(exercise03
     include/raytracer_view.h
     include/bvh.h
 
-    src/exercise03.cpp
 )
 
 find_package(OpenMP)
