@@ -8,10 +8,17 @@ INCLUDEPATH += $$clean_path(/usr/include/)
 
 
 SOURCES += \
-        $$PWD/main.cpp
+        $$PWD/main.cpp \
+        BallUtils.cpp \
+        DrawingUtils.cpp \
+        VectorUtils.cpp
 
 HEADERS += \
-    $$PWD/MiddleAverageFilter.h
+    $$PWD/MiddleAverageFilter.h \
+    Ball.h \
+    BallUtils.h \
+    DrawingUtils.h \
+    VectorUtils.h
 
 LIBS += -L$$PWD/../SFML-2.5.1/lib/ -lsfml-audio
 LIBS += -L$$PWD/../SFML-2.5.1/lib/ -lsfml-graphics

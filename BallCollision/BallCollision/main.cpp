@@ -1,56 +1,10 @@
-#include "SFML/Graphics.hpp"
+#include "Ball.h"
+#include "BallUtils.h"
+#include "DrawingUtils.h"
 #include "MiddleAverageFilter.h"
-
-constexpr int WINDOW_X = 1024;
-constexpr int WINDOW_Y = 768;
-constexpr int MAX_BALLS = 300;
-constexpr int MIN_BALLS = 100;
 
 Math::MiddleAverageFilter<float,100> fpscounter;
 
-struct Ball
-{
-    sf::Vector2f p;
-    sf::Vector2f dir;
-    float r = 0;
-    float speed = 0;
-};
-
-void draw_ball(sf::RenderWindow& window, const Ball& ball)
-{
-    sf::CircleShape gball;
-    gball.setRadius(ball.r);
-    gball.setPosition(ball.p.x, ball.p.y);
-    window.draw(gball);
-}
-
-void move_ball(Ball& ball, float deltaTime)
-{
-
-    ball.dir.x = (ball.p.x + ball.r < WINDOW_X - 1 && (ball.p.x - ball.r) )? ball.dir.x : -ball.dir.x;
-    ball.dir.y = (ball.p.y + ball.r < WINDOW_Y - 1 && (ball.p.y - ball.r) )? ball.dir.y : -ball.dir.y;
-
-    float dx = ball.dir.x * ball.speed * deltaTime;
-    float dy = ball.dir.y * ball.speed * deltaTime;
-
-    dx = (ball.p.x + ball.r + dx < WINDOW_X)? dx : WINDOW_X - ball.p.x - ball.r - 1;
-    dy = (ball.p.y + ball.r + dy < WINDOW_Y)? dy : WINDOW_Y - ball.p.y - ball.r - 1;
-
-    dx = (ball.p.x - ball.r + dx >= 0)? dx : -(ball.p.x - ball.r);
-    dy = (ball.p.y - ball.r + dy >= 0)? dy : -(ball.p.y - ball.r);
-
-    ball.p.x += dx;
-    ball.p.y += dy;
-}
-
-void draw_fps(sf::RenderWindow& window, float fps)
-{
-    char c[32];
-    snprintf(c, 32, "FPS: %f", fps);
-    std::string string(c);
-    sf::String str(c);
-    window.setTitle(str);
-}
 
 int main()
 {
@@ -103,15 +57,23 @@ int main()
         /// Как можно было-бы улучшить текущую архитектуру кода?
         /// Данный код является макетом, вы можете его модифицировать по своему усмотрению
 
-        for (auto& ball : balls)
-        {
-            move_ball(ball, deltaTime);
+//        for (auto& ball : balls)
+//        {
+//            DrawingUtils::move_ball(ball, deltaTime);
+//        }
+
+        for (size_t currBallIdx = 0; currBallIdx < balls.size(); ++currBallIdx) {
+            for (size_t collBallIdx = currBallIdx + 1; collBallIdx < balls.size(); ++collBallIdx) {
+                if (BallUtils::isCollided(balls[currBallIdx], balls[collBallIdx], deltaTime)) {
+                }
+            }
+            DrawingUtils::move_ball(balls[currBallIdx], deltaTime);
         }
 
         window.clear();
         for (const auto ball : balls)
         {
-            draw_ball(window, ball);
+            DrawingUtils::draw_ball(window, ball);
         }
 
 		//draw_fps(window, fpscounter.getAverage());

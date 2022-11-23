@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 6.0.2, 2022-11-22T20:14:37. -->
+<!-- Written by QtCreator 6.0.2, 2022-11-23T18:13:51. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -238,8 +238,9 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/media/st/9ddc574e-9d8f-477d-a577-e299a71917a8/anastasia/CPP/interview/BallCollision/BallCollision.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/media/st/9ddc574e-9d8f-477d-a577-e299a71917a8/anastasia/CPP/interview/BallCollision/BallCollision.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">BallCollision2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/media/st/9ddc574e-9d8f-477d-a577-e299a71917a8/anastasia/CPP/CGProjects/BallCollision/BallCollision/BallCollision.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/media/st/9ddc574e-9d8f-477d-a577-e299a71917a8/anastasia/CPP/CGProjects/BallCollision/BallCollision/BallCollision.pro</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
