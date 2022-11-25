@@ -21,8 +21,10 @@ int main()
         newBall.p.y = rand() % WINDOW_Y;
         newBall.dir.x = (-5 + (rand() % 10)) / 3.;
         newBall.dir.y = (-5 + (rand() % 10)) / 3.;
-        newBall.r = 5 + rand() % 5;
-        newBall.speed = 30 + rand() % 30;
+        newBall.r = 15 + rand() % 10;
+//        newBall.speed = 30 + rand() % 30;
+        newBall.speedX = (30 + rand() % 30) * newBall.dir.x;
+        newBall.speedY = (30 + rand() % 30) * newBall.dir.y;
         balls.push_back(newBall);
     }
 
@@ -57,18 +59,16 @@ int main()
         /// Как можно было-бы улучшить текущую архитектуру кода?
         /// Данный код является макетом, вы можете его модифицировать по своему усмотрению
 
-//        for (auto& ball : balls)
-//        {
-//            DrawingUtils::move_ball(ball, deltaTime);
-//        }
+        for (size_t currBallIdx = 0; currBallIdx < balls.size(); ++currBallIdx)
+            for (size_t collBallIdx = currBallIdx + 1; collBallIdx < balls.size(); ++collBallIdx)
+                BallUtils::resolveCollision(balls[currBallIdx], balls[collBallIdx], deltaTime, currBallIdx, collBallIdx);
 
-        for (size_t currBallIdx = 0; currBallIdx < balls.size(); ++currBallIdx) {
-            for (size_t collBallIdx = currBallIdx + 1; collBallIdx < balls.size(); ++collBallIdx) {
-                if (BallUtils::isCollided(balls[currBallIdx], balls[collBallIdx], deltaTime)) {
-                }
-            }
-            DrawingUtils::move_ball(balls[currBallIdx], deltaTime);
+
+        for (auto& ball : balls)
+        {
+            DrawingUtils::move_ball(ball, deltaTime);
         }
+
 
         window.clear();
         for (const auto ball : balls)
