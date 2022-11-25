@@ -2,6 +2,7 @@
 #include "BallUtils.h"
 #include "DrawingUtils.h"
 #include "MiddleAverageFilter.h"
+#include <iostream>
 
 Math::MiddleAverageFilter<float,100> fpscounter;
 
@@ -11,6 +12,11 @@ int main()
     sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "ball collision demo");
     srand(time(NULL));
 
+
+    int splitFrequency = 2;
+    int offset = 10 + rand() % 10;
+    std::vector<sf::Vector2f> partitioning = DrawingUtils::partitioning(splitFrequency);
+    std::vector<sf::Vector2f> partitioningWithOffset = DrawingUtils::partitioning(splitFrequency, offset);
     std::vector<Ball> balls;
 
     // randomly initialize balls
@@ -35,7 +41,6 @@ int main()
 
     while (window.isOpen())
     {
-
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -59,9 +64,23 @@ int main()
         /// Как можно было-бы улучшить текущую архитектуру кода?
         /// Данный код является макетом, вы можете его модифицировать по своему усмотрению
 
-        for (size_t currBallIdx = 0; currBallIdx < balls.size(); ++currBallIdx)
-            for (size_t collBallIdx = currBallIdx + 1; collBallIdx < balls.size(); ++collBallIdx)
-                BallUtils::resolveCollision(balls[currBallIdx], balls[collBallIdx], deltaTime, currBallIdx, collBallIdx);
+
+        auto sortByPosition = [](const Ball& lhsBall, const Ball& rhsBall){
+            if (lhsBall.p.x == rhsBall.p.x )
+                return lhsBall.p.y < rhsBall.p.y;
+            return lhsBall.p.x < rhsBall.p.x;
+        };
+
+        std::sort(balls.begin(), balls.end(), sortByPosition);
+        BallUtils::resolveCollisionForPatrition(partitioning, balls);
+        BallUtils::resolveCollisionForPatrition(partitioningWithOffset, balls);
+
+    // without patrtitioning
+//        float begin_time = clock.getElapsedTime().asSeconds();
+//        for (auto currBallIt = 0; currBallIt < balls.size(); ++currBallIt)
+//            for (auto nextBallIt = currBallIt + 1; nextBallIt < balls.size(); ++nextBallIt)
+//                BallUtils::resolveCollision(balls[currBallIt], balls[nextBallIt]);
+
 
 
         for (auto& ball : balls)
