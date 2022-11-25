@@ -1,54 +1,58 @@
 #include "BallUtils.h"
 #include "VectorUtils.h"
+#include "iostream"
+#include <math.h>
 
-//using namespace BallUtils;
 
 
-bool BallUtils::isCollided(Ball& lhsBall, Ball& rhsBall, float deltaTime)
+void BallUtils::resolveCollision(Ball& lhsBall, Ball& rhsBall, float deltaTime, int lIdx, int rIdx)
 {
+
+//    std::cout<< "lhs ball: " << lIdx << " position: " << lhsBall.p.x << "  " << lhsBall.p.y << " radius: " << lhsBall.r <<
+//                " dir: " << lhsBall.dir.x << " " << lhsBall.dir.x << " speed: " << lhsBall.speedX << " " << lhsBall.speedY << std::endl;
+
+//    std::cout<< "rhs ball: "<< rIdx << " position: " << rhsBall.p.x << "  " << rhsBall.p.y << " radius: " << rhsBall.r <<
+//                " dir: " << rhsBall.dir.x << " " << rhsBall.dir.x << " speed: " << rhsBall.speedX << " " << rhsBall.speedY << std::endl;
     if (lhsBall == rhsBall)
-        return false;
+        return;
 
-      sf::Vector2f collisionVector = lhsBall.p - rhsBall.p;
-      float distance = VectorUtils::lengthVector2(collisionVector);
+    float summRad = lhsBall.r + rhsBall.r;
+//    if (std::abs(rhsBall.p.x - lhsBall.p.x) <= summRad &&  std::abs(rhsBall.p.y - lhsBall.p.y) <= summRad) {
 
-        if (distance == 0.0) {
-            collisionVector = sf::Vector2f(1.0, 0.0);
-            distance = 1.0;
-        }
-//        if (distance > 1.0)
-//            return false;
+        sf::Vector2f normalVector = sf::Vector2f(lhsBall.p.x - rhsBall.p.x, lhsBall.p.y - rhsBall.p.y);
+        float distance = VectorUtils::lengthVector2(normalVector);
+        normalVector = normalVector / distance;
 
-        // Get the components of the velocity vectors which are parallel to the collision.
-        // The perpendicular component remains the same for both fish
+    if (distance < summRad) {
 
-//        collisionVector = collisionVector / distance;
-//        float aci = VectorUtils::dot(lhsBall.dir * lhsBall.speed * deltaTime, collisionVector);
-//        float bci = VectorUtils::dot(rhsBall.dir * rhsBall.speed * deltaTime, collisionVector);
+        float dr = (summRad - distance) / 2.0f;
+        lhsBall.p += normalVector * dr;
+        rhsBall.p += normalVector * (-1.0f) * dr;
 
-//        // Solve for the new velocities using the 1-dimensional elastic collision equations.
-//        // Turns out it's really simple when the masses are the same.
-//        float acf = bci;
-//        float bcf = aci;
+        sf::Vector2f tangentVector = sf::Vector2f((-1.f) * normalVector.y, normalVector.x);
 
-        sf::Vector2f velocityVector = lhsBall.dir * lhsBall.speed - rhsBall.dir * rhsBall.speed;
-        float aci = VectorUtils::dot(velocityVector, collisionVector);
-        float bci = VectorUtils::dot(-velocityVector, -collisionVector);
+        float v1n = VectorUtils::dot(normalVector, lhsBall.velocity());
+        float v1t = VectorUtils::dot(tangentVector, lhsBall.velocity());
+        float v2n = VectorUtils::dot(normalVector, rhsBall.velocity());
+        float v2t = VectorUtils::dot(tangentVector, rhsBall.velocity());
 
-        // Replace the collision velocity components with the new ones
+        float massDiff = lhsBall.square() - rhsBall.square();
+        float reverseMassSumm = 1.0f / (lhsBall.square() + rhsBall.square());
+        float newV1n = (v1n * massDiff + 2.0f * rhsBall.square() * v2n) * reverseMassSumm;
+        float newV2n = (v2n * (-1.0f) * massDiff + 2.0f * lhsBall.square() * v1n) * reverseMassSumm;
 
-//        sf::Vector2f newLhsVelocity = collisionVector * (acf - aci);
-//        sf::Vector2f newRhsVelocity = collisionVector * (bcf - bci);
-        sf::Vector2f newLhsVelocity = collisionVector * aci / distance;
-        sf::Vector2f newRhsVelocity = -collisionVector * bci / distance;
+//        sf::Vector2f newLhsVelocity = v1n * normalVector + v1t * tangentVector;
+//        sf::Vector2f newRhsVelocity = v2n * normalVector + v2t * tangentVector;
+        sf::Vector2f newLhsVelocity = newV1n * normalVector + v1t * tangentVector;
+        sf::Vector2f newRhsVelocity = newV2n * normalVector + v2t * tangentVector;
 
-        lhsBall.dir.x = (newLhsVelocity.x >= 0)? lhsBall.dir.x : -lhsBall.dir.x;
-        lhsBall.dir.y = (newLhsVelocity.y >= 0)? lhsBall.dir.y : -lhsBall.dir.y;
-        rhsBall.dir.x = (newRhsVelocity.x >= 0)? rhsBall.dir.x : -rhsBall.dir.x;
-        rhsBall.dir.y = (newRhsVelocity.y >= 0)? rhsBall.dir.y : -rhsBall.dir.y;
+        lhsBall.setVelocity(newLhsVelocity);
+        rhsBall.setVelocity(newRhsVelocity);
 
-        lhsBall.speed -= VectorUtils::lengthVector2(newLhsVelocity) * 2 * rhsBall.square() / rhsBall.square() + lhsBall.square();
-        rhsBall.speed -= VectorUtils::lengthVector2(newRhsVelocity) * 2 * lhsBall.square() / rhsBall.square() + lhsBall.square();
 
-        return true;
+//        std::cout<< "lhs ball: " << lIdx << " dir: " << lhsBall.dir.x << " " << lhsBall.dir.x << " speed: " << lhsBall.speedX << " " << lhsBall.speedY << std::endl;
+//        std::cout<< "rhs ball: " << rIdx << " dir: " << rhsBall.dir.x << " " << rhsBall.dir.x << " speed: " <<  rhsBall.speedX << " " << rhsBall.speedY<< std::endl;
+
+    }
 }
+

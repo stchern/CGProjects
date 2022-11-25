@@ -5,7 +5,7 @@
 
 namespace BallUtils {
 
-bool isCollided(Ball& lhsBall, Ball& rhsBall, float deltaTime);
+void resolveCollision(Ball& lhsBall, Ball& rhsBall, float deltaTime, int lIdx, int rIdx);
 
 }
 
