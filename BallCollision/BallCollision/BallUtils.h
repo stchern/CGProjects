@@ -5,7 +5,8 @@
 
 namespace BallUtils {
 
-void resolveCollision(Ball& lhsBall, Ball& rhsBall, float deltaTime, int lIdx, int rIdx);
+void resolveCollision(Ball& lhsBall, Ball& rhsBall);
+void resolveCollisionForPatrition(const std::vector<sf::Vector2f>& partitioning, std::vector<Ball>& balls);
 
 }
 
