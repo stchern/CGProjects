@@ -10,8 +10,7 @@ INCLUDEPATH += $$clean_path(/usr/include/)
 SOURCES += \
         $$PWD/main.cpp \
         BallUtils.cpp \
-        DrawingUtils.cpp \
-        VectorUtils.cpp
+        DrawingUtils.cpp
 
 HEADERS += \
     $$PWD/MiddleAverageFilter.h \
