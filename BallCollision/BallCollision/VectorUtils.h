@@ -18,6 +18,11 @@ T dot(const sf::Vector2<T>& lhsV, const sf::Vector2<T>& rhsV) {
     return (lhsV.x * rhsV.x + lhsV.y * rhsV.y);
 }
 
+template <typename T>
+sf::Vector2<T> mul(const sf::Vector2<T>& lhsV, const sf::Vector2<T>& rhsV) {
+    return sf::Vector2<T>(lhsV.x * rhsV.x, lhsV.y * rhsV.y);
+}
+
 };
 
 #endif // VECTORUTILS_H
