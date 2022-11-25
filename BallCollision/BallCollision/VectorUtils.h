@@ -2,7 +2,6 @@
 #define VECTORUTILS_H
 
 #include "SFML/Graphics.hpp"
-//#include <iostream>
 #include <cmath>
 
 namespace VectorUtils
@@ -16,11 +15,6 @@ T lengthVector2(const sf::Vector2<T>& v) {
 template <typename T>
 T dot(const sf::Vector2<T>& lhsV, const sf::Vector2<T>& rhsV) {
     return (lhsV.x * rhsV.x + lhsV.y * rhsV.y);
-}
-
-template <typename T>
-sf::Vector2<T> mul(const sf::Vector2<T>& lhsV, const sf::Vector2<T>& rhsV) {
-    return sf::Vector2<T>(lhsV.x * rhsV.x, lhsV.y * rhsV.y);
 }
 
 };
