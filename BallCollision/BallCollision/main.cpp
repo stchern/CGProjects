@@ -71,11 +71,16 @@ int main()
             return lhsBall.p.x < rhsBall.p.x;
         };
 
+
+        // добавление сортировки и разбиения окна, для ограничения области просчета столкновений для каждого мяча
+        // разбиение позволяет уменьшить количество сравнений, исскать колизии для мяча только в заданной области, а не по всему окну
+        // здесь используется два разбиения, одно из которых смещенно, для того, что бы по второму разу пройтись по сетке разбиения и заметить коллизии, которые могли
+        // быть пропущены при работе с первым разбиением
         std::sort(balls.begin(), balls.end(), sortByPosition);
         BallUtils::resolveCollisionForPatrition(partitioning, balls);
         BallUtils::resolveCollisionForPatrition(partitioningWithOffset, balls);
 
-    // without patrtitioning
+    // вычисления коллизий без использования сортировки и разбиения
 //        float begin_time = clock.getElapsedTime().asSeconds();
 //        for (auto currBallIt = 0; currBallIt < balls.size(); ++currBallIt)
 //            for (auto nextBallIt = currBallIt + 1; nextBallIt < balls.size(); ++nextBallIt)

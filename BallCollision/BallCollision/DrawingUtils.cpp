@@ -14,7 +14,7 @@ void DrawingUtils::move_ball(Ball& ball, float deltaTime)
     float dx = ball.velocity().x * deltaTime;
     float dy = ball.velocity().y * deltaTime;
 
-    //correct code should be without multiptying or division by radius, but it looks strange
+    // умножение и деление добавлено для визуально правильной отрисовки
 
     if ( ball.p.x + 2.0f *  ball.r + dx  >= WINDOW_X ) {
         ball.speedX = -ball.speedX;
@@ -52,7 +52,9 @@ void DrawingUtils::draw_fps(sf::RenderWindow& window, float fps)
 std::vector<sf::Vector2f> DrawingUtils::partitioning(size_t splitFrequency, int offset)
 {
     std::vector<sf::Vector2f> endPositions;
-
+    // создание разбиения окна, в зависимости от частоты разбиения (splitFrequency)
+    // при заданной splitFrequency окно разбивается на splitFrequency*splitFrequency областей
+    // каждая область задается только нижней границей, т.к шары отсортированы слева направо и сверху вниз, и необходимость в верхней границе отпадает
     for (size_t y_part = 0; y_part < splitFrequency; ++y_part)
         for (size_t x_part = 0; x_part < splitFrequency; ++x_part) {
             sf::Vector2f firstSectionEnd(WINDOW_X * (x_part + 1) / splitFrequency - 1 - offset, WINDOW_Y * (y_part + 1) / splitFrequency - 1 - offset);

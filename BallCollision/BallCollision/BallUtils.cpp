@@ -11,6 +11,7 @@ void BallUtils::resolveCollision(Ball& lhsBall, Ball& rhsBall)
     normalVector = normalVector / distance;
 
     if (distance < summRad) {
+        // в основе вычислений лежат формулы из статьи https://www.vobarian.com/collisions/2dcollisions2.pdf
 
         float offset = (summRad - distance) / 2.0f;
         lhsBall.p += normalVector * offset;
@@ -40,6 +41,9 @@ void BallUtils::resolveCollision(Ball& lhsBall, Ball& rhsBall)
 
 void BallUtils::resolveCollisionForPatrition(const std::vector<sf::Vector2f>& partitioning, std::vector<Ball>& balls)
 {
+
+    // в отсортированном массиве шаров, мы находим крайний выходящий за текущую заданную partitioning область
+    // и ищем коллизии только в ограниченной области
     auto startIter = balls.begin();
     for (size_t positionIdx = 0; positionIdx < partitioning.size(); ++positionIdx) {
         sf::Vector2f position = partitioning[positionIdx];
