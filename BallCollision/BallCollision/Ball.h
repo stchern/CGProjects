@@ -7,14 +7,14 @@
 struct Ball
 {
     sf::Vector2f p;
-    sf::Vector2f dir;
+//    sf::Vector2f dir;
     float r = 0;
 //    float speed = 0.0f;
     float speedX = 0.0f;
     float speedY = 0.0f;
 
     bool operator==(const Ball& other) const{
-        if (p == other.p && dir == other.dir && r == other.r && speedX == other.speedX && speedY == other.speedY)
+        if (p == other.p &&  r == other.r && speedX == other.speedX && speedY == other.speedY)
             return true;
         return false;
     }
