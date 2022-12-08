@@ -1,11 +1,28 @@
-#ifndef TESTDRAWINGUTILS_H
-#define TESTDRAWINGUTILS_H
+#ifndef TEST_DRAWING_UTILS_H
+#define TEST_DRAWING_UTILS_H
 
+#include <QTest>
 
-class TestDrawingUtils
+class TestDrawingUtils: public QObject
 {
+    Q_OBJECT
+
 public:
-    TestDrawingUtils();
+    explicit TestDrawingUtils(QObject *parent = 0): QObject(parent){
+    };
+
+private slots:
+    void testMoveBall01();
+    void testMoveBall02();
+    void testMoveBall03();
+    void testMoveBall04();
+
+    void testPartitioning01();
+    void testPartitioning02();
+    void testPartitioning03();
+    void testPartitioning04();
+
 };
 
-#endif // TESTDRAWINGUTILS_H
+#endif // TEST_DRAWING_UTILS_H
+
