@@ -1,4 +1,5 @@
 #include "DrawingUtils.h"
+#include <QDebug>
 
 void DrawingUtils::draw_ball(sf::RenderWindow& window, const Ball& ball)
 {
@@ -10,7 +11,7 @@ void DrawingUtils::draw_ball(sf::RenderWindow& window, const Ball& ball)
 
 void DrawingUtils::move_ball(Ball& ball, float deltaTime)
 {
-
+    qDebug()<< deltaTime;
     float dx = ball.velocity().x * deltaTime;
     float dy = ball.velocity().y * deltaTime;
 

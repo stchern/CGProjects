@@ -25,12 +25,17 @@ int main()
         Ball newBall;
         newBall.p.x = rand() % WINDOW_X;
         newBall.p.y = rand() % WINDOW_Y;
-        newBall.dir.x = (-5 + (rand() % 10)) / 3.;
-        newBall.dir.y = (-5 + (rand() % 10)) / 3.;
+//        newBall.dir.x = (-5 + (rand() % 10)) / 3.;
+//        newBall.dir.y = (-5 + (rand() % 10)) / 3.;
+        const int dirX = (-5 + (rand() % 10)) / 3.;
+        const int dirY = (-5 + (rand() % 10)) / 3.;
         newBall.r = 15 + rand() % 10;
 //        newBall.speed = 30 + rand() % 30;
-        newBall.speedX = (30 + rand() % 30) * newBall.dir.x;
-        newBall.speedY = (30 + rand() % 30) * newBall.dir.y;
+        newBall.speedX = (30 + rand() % 30) * dirX;
+        newBall.speedY = (30 + rand() % 30) * dirY;
+
+//        newBall.speedX = (30 + rand() % 30) * dirX;
+//        newBall.speedY = (30 + rand() % 30) * dirY;
         balls.push_back(newBall);
     }
 
