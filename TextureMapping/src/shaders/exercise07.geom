@@ -28,8 +28,12 @@ out vec2 texCoords;
 void main()
 {
     // TODO: use vsWSPosition and vsTexCoords to compute the tangent and bi-tangent vectors
-    vec3 s = vec3(0.0f);
-    vec3 t = vec3(0.0f);
+    float denominator = 1.0f / ( (vsTexCoords[1][0] - vsTexCoords[0][0]) * (vsTexCoords[2][1] - vsTexCoords[0][1]) -
+                                (vsTexCoords[1][1] - vsTexCoords[0][1]) * (vsTexCoords[2][0] - vsTexCoords[0][0]));
+    vec3 s = vec3((vsWSPosition[1] - vsWSPosition[0]) * (vsTexCoords[2][1] - vsTexCoords[0][1]) -
+                  (vsWSPosition[2] - vsWSPosition[0])*(vsTexCoords[1][1] - vsTexCoords[0][1])) * denominator;
+    vec3 t = vec3((vsWSPosition[2] - vsWSPosition[0]) * (vsTexCoords[1][0] - vsTexCoords[0][0]) -
+                    (vsWSPosition[1] - vsWSPosition[0])*(vsTexCoords[2][0] - vsTexCoords[0][0])) * denominator;
 
     // now, compute the per-vertex data
 
@@ -50,6 +54,9 @@ void main()
 
             // TODO: overwrite the gl_Position with the displaced position
             // when applying the model view projection matrix, make sure to set w=1 in your vec4
+            float displacementSample = texture(displacementMap, texCoords).r - 0.5f;
+            wsPosition.xyz += displacementSample * displacementScale * normal;
+            gl_Position = vp * vec4(wsPosition.xyz, 1.0);
         }
 
         EmitVertex();

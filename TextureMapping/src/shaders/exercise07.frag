@@ -9,7 +9,8 @@ uniform vec3 pointLightPower;
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
 uniform sampler2D roughnessTexture;
-uniform sampler2DShadow shadowMap;
+//uniform sampler2DShadow shadowMap;
+uniform sampler2D shadowMap;
 
 in vec4 lsPosition;
 in vec4 wsPosition;
@@ -67,12 +68,12 @@ vec3 F(float cosTheta) {
 
     vec3 twoACosTheta = sqrt(aSqr) * (2.0f * cosTheta);
     vec3 Rs = (aSqrPlusBSqr + cosThetaSqr - twoACosTheta)
-             / (aSqrPlusBSqr + cosThetaSqr + twoACosTheta);
+            / (aSqrPlusBSqr + cosThetaSqr + twoACosTheta);
 
     vec3 temp2 = twoACosTheta * sinThetaSqr;
     // the fraction is multiplied by cosThetaSqr/cosThetaSqr to avoid computing tanThetaSqr
     vec3 Rp = Rs * ( (aSqrPlusBSqr*cosThetaSqr + sinThetaSqr*sinThetaSqr - temp2)
-                   / (aSqrPlusBSqr*cosThetaSqr + sinThetaSqr*sinThetaSqr + temp2));
+                     / (aSqrPlusBSqr*cosThetaSqr + sinThetaSqr*sinThetaSqr + temp2));
 
     return (Rs + Rp) * 0.5f;
 }
@@ -98,7 +99,9 @@ void main() {
             vec3 t = wsBitangent;
 
             // TODO: apply normal (bump) mapping here to replace the normal
-            normal = normal;
+            vec3 normalMapTexelRGB = texture(normalMap, texCoords).rgb;
+            normal = 2.0f * normalMapTexelRGB - 0.5f;
+            normal = normalize(s * normal.x + t * normal.y + cross(s, t) * normal.z);
         }
 
         float dist = length(wsDir);
@@ -112,10 +115,20 @@ void main() {
             // TODO: apply shadow mapping
             // lookup the correct location in the shadowMap
             // if you get black, simply return
+            vec3 projCoords = lsPosition.xyz / lsPosition.w;
+            projCoords = projCoords * 0.5 + 0.5;
+            float closestDepth = texture(shadowMap, projCoords.xy).r;
+            float currentDepth = projCoords.z;
+
+            if (currentDepth > 1.0)
+                return;
             bool shaded = false;
+            shaded = (currentDepth * (1.0f - epsilon) > closestDepth ) ? true : false;
+
             if (shaded) {
                 return;
             }
+
         }
 
         // diffuse shading
