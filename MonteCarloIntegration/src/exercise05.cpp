@@ -162,13 +162,10 @@ Color RayTracer::pathIntegrator(const Scene& scene, const Ray& cameraRay) const
             // TODO: Sample an outgoing ray direction using the Sampler class
             // and update the throughput: Multiply with the BRDF and cosine terms,
             // and divide by the sample's PDF.
-            const Sampler sampler;
-            ray = {its.point, toWorld(sampler.cosineHemisphere())};
-            const float cosTheta = dot(its.shadingFrame.n, toWorld(sampler.cosineHemisphere()));
-            throughput *= material.diffuse().eval(cosTheta) * cosTheta / sampler.cosineHemispherePdf(cosTheta);
-
-            // TODO: remove this once you've set your new ray and throughput
-            //            break;
+            const Vector3D omegaI = Sampler::uniformHemisphere();
+            ray = {its.point, toWorld(omegaI)};
+            throughput *=
+                material.eval(omegaO, omegaI) * omegaI.z * (1.0f / Sampler::uniformHemispherePdf());
         }
         else {
             // on these surfaces, the outgoing ray direction is fixed - we cannot sample it
