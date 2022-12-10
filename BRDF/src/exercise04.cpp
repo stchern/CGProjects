@@ -7,39 +7,40 @@ Color Material::Diffuse::eval(float cosThetaI) const
 {
     // TODO: evaluate the diffuse BRDF and cosine terms
     // on the backside, the material should be black.
-    const float eps = 1e-10;
-    if (cosThetaI < eps)
-        cosThetaI = 0.0;
-    return {albedo * cosThetaI / pi };
+    if (cosThetaI > 0.0f)
+        return albedo * invPi;
+
+    return {0.0f};
 }
 
 Vector3D Material::reflect(Vector3D v)
 {
     // TODO: reflect the vector v given in the local space with normal (0, 0, 1)
-    const Vector3D normal{0, 0, 1};
-    const float cosThetaO = - dot(v, normal);
-    return v + normal * 2.0f * cosThetaO;
+    return {-v.x, -v.y, v.z};
 }
 
 Vector3D Material::Dielectric::refract(Vector3D omegaO) const
 {
     // TODO: return the refracted ray
-    const Vector3D normal{0, 0, 1};
-    float cosThetaO = - dot(omegaO, normal);
-    const float etaT{cosThetaO < 0.0f ? this->etaO : this->etaI};
-    const float etaO{cosThetaO < 0.0f ? this->etaI : this->etaO};
-    const float mu = etaO / etaT;
-    const float sinTheta0 = mu * mu * (1 - cosThetaO * cosThetaO);
-    if (sinTheta0 <= etaI / etaO)  // total internal refration
-        return {0, 0, 0};
+    const float etaT{omegaO.z >= 0.0f ? this->etaI : this->etaO};
+    const float etaO{omegaO.z >= 0.0f ? this->etaO : this->etaI};
 
-    return omegaO  * mu + normal * (mu * cosThetaO - sqrt(1 - sinTheta0));
+    const float eta = etaO / etaT;
+    const float x = -omegaO.x * eta;
+    const float y = -omegaO.y * eta;
+    const float zSqr = 1.0f - x * x - y * y;
+
+    if (zSqr <= 0.0f) // total internal reflection
+        return {};
+
+    const float z = std::sqrt(zSqr);
+    return {x, y, (omegaO.z >= 0.0f) ? -z : z};
 }
 
 float Material::Dielectric::fresnel(float cosThetaO, float cosThetaT) const
 {
     if (cosThetaT == 0.0f)
-        return {};
+        return 1.0f;
 
     const float etaT{cosThetaO < 0.0f ? this->etaO : this->etaI};
     const float etaO{cosThetaO < 0.0f ? this->etaI : this->etaO};
