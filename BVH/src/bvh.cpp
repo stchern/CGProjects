@@ -44,18 +44,21 @@ void BVH::construct(const Mesh& mesh)
     };
 
     // TODO: build the BVH
-    for (size_t nodeIdx = 0; nodeIdx < numFaces / 2 - 1; ++nodeIdx) {
+    for (uint32_t nodeIdx = 0;  nodeIdx < nodes.size() && nodeIdx < (nodes.capacity() - 1) / 2; ++nodeIdx) {
         if ((nodes[nodeIdx].facesEnd - nodes[nodeIdx].facesBegin > 4) && (nodeIdx < std::pow(2, maxDepth) - 1)) {
-            const uint32_t start = nodes[nodeIdx].facesBegin;
-            const uint32_t end = nodes[nodeIdx].facesEnd;
+            const Node& currentNode = nodes[nodeIdx];
+            const uint32_t start = currentNode.facesBegin;
+            const uint32_t end = currentNode.facesEnd;
             const uint32_t mid = (end + start) / 2;
             const uint32_t indexOfMaxDimension = nodes[nodeIdx].bounds.extents().maxDimension();
 
-            std::nth_element(std::begin(faceIndices) + start, std::begin(faceIndices) + mid, std::begin(faceIndices) + end,
-                        [indexOfMaxDimension, triangleCenter](uint32_t triangleIndexLhs, uint32_t triangleIndexRhs) {
-                return triangleCenter(triangleIndexLhs, indexOfMaxDimension) < triangleCenter(triangleIndexRhs, indexOfMaxDimension);
-                }
-            );
+            auto currentFaces = getFaceIndices(currentNode);
+            auto center = currentFaces.begin() + currentFaces.size() / 2;
+            std::nth_element(currentFaces.begin(), center, currentFaces.end(),
+                             [indexOfMaxDimension, triangleCenter](uint32_t a, uint32_t b) -> bool {
+                                 return triangleCenter(a, indexOfMaxDimension) < triangleCenter(b, indexOfMaxDimension);
+                             });
+
 
             AABB leftChildAABB;
             for (uint32_t idx = start; idx < mid; ++idx) {
