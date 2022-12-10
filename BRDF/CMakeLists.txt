@@ -169,7 +169,7 @@ add_executable(exercise00
     src/gui/mesh_view.cpp
     src/gui/raytracer_view.cpp
 
-    src/exercise04.cpp
+    src/material.cpp
 )
 
 find_package(OpenMP)
