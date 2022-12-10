@@ -1,0 +1,43 @@
+#version 410 core
+
+layout(triangles, fractional_even_spacing, ccw) in;
+
+in vec4 tcsLSPosition[];
+in vec4 tcsWSPosition[];
+in vec3 tcsWSNormal[];
+flat in vec3 tcsWSNormalFlat[];
+in vec2 tcsTexCoords[];
+
+out vec4 vsLSPosition;
+out vec4 vsWSPosition;
+out vec3 vsWSNormal;
+flat out vec3 vsWSNormalFlat;
+out vec2 vsTexCoords;
+
+void main()
+{
+    // apply barycentric interpolation using the tesselation coordinates
+
+    gl_Position  = gl_in[0].gl_Position * gl_TessCoord[0];
+    gl_Position += gl_in[1].gl_Position * gl_TessCoord[1];
+    gl_Position += gl_in[2].gl_Position * gl_TessCoord[2];
+
+    vsLSPosition  = tcsLSPosition[0] * gl_TessCoord[0];
+    vsLSPosition += tcsLSPosition[1] * gl_TessCoord[1];
+    vsLSPosition += tcsLSPosition[2] * gl_TessCoord[2];
+
+    vsWSPosition  = tcsWSPosition[0] * gl_TessCoord[0];
+    vsWSPosition += tcsWSPosition[1] * gl_TessCoord[1];
+    vsWSPosition += tcsWSPosition[2] * gl_TessCoord[2];
+
+    vsWSNormal  = tcsWSNormal[0] * gl_TessCoord[0];
+    vsWSNormal += tcsWSNormal[1] * gl_TessCoord[1];
+    vsWSNormal += tcsWSNormal[2] * gl_TessCoord[2];
+
+    // no need to interpolate a flat variable
+    vsWSNormalFlat = tcsWSNormalFlat[2];
+
+    vsTexCoords  = tcsTexCoords[0] * gl_TessCoord[0];
+    vsTexCoords += tcsTexCoords[1] * gl_TessCoord[1];
+    vsTexCoords += tcsTexCoords[2] * gl_TessCoord[2];
+}

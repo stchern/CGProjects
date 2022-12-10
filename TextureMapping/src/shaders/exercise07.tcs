@@ -1,0 +1,49 @@
+#version 410 core
+
+layout(vertices = 3) out;
+
+uniform vec3 cameraPos;
+uniform bool textured;
+uniform bool useDisplacementMapping;
+
+in vec4 vsLSPosition[];
+in vec4 vsWSPosition[];
+in vec3 vsWSNormal[];
+flat in vec3 vsWSNormalFlat[];
+in vec2 vsTexCoords[];
+
+out vec4 tcsLSPosition[];
+out vec4 tcsWSPosition[];
+out vec3 tcsWSNormal[];
+flat out vec3 tcsWSNormalFlat[];
+out vec2 tcsTexCoords[];
+
+const float tessMax = 64.0f;
+const float tessMin = 1.0f;
+
+void main()
+{
+    tcsLSPosition[gl_InvocationID]   = vsLSPosition[gl_InvocationID];
+    tcsWSPosition[gl_InvocationID]   = vsWSPosition[gl_InvocationID];
+    tcsWSNormal[gl_InvocationID]     = vsWSNormal[gl_InvocationID];
+    tcsWSNormalFlat[gl_InvocationID] = vsWSNormalFlat[gl_InvocationID];
+    tcsTexCoords[gl_InvocationID]    = vsTexCoords[gl_InvocationID];
+
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+
+    float level = 1.0f;
+    if (textured && useDisplacementMapping) {
+        // estimate tesselation level from area and squared distance
+        vec3 dir = cameraPos-vsWSPosition[0].xyz;
+        float distanceSqr = dot(dir, dir);
+        vec3 v1v2 = vsWSPosition[1].xyz-vsWSPosition[0].xyz;
+        vec3 v1v3 = vsWSPosition[2].xyz-vsWSPosition[0].xyz;
+        float area = length(cross(v1v2, v1v3));
+        level = max(tessMin, tessMax*min(1.0f, area/(distanceSqr)));
+    }
+
+    gl_TessLevelOuter[0] = level;
+    gl_TessLevelOuter[1] = level;
+    gl_TessLevelOuter[2] = level;
+    gl_TessLevelInner[0] = level;
+}
